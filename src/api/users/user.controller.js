@@ -1,66 +1,79 @@
+import userService from "./user.service.js";
 class UserController {
-    constructor() {
-        this.users = [
-            {
-                "id": 1,
-                "fullname": "Nguyen Huy Tuong",
-                "gender": true,
-                "age": 18
-            },
-            {
-                "id": 2,
-                "fullname": "Nguyen Thi Tuong",
-                "gender": false,
-                "age": 15
-            }
-        ];
-    }
 
     checkID = (req,res,next) => {
-        const user = this.users.find((user) => user.id == req.params.id);
-        if(user == null) {
-            return res.status(404).json({
-                "status": "failed",
-                "message": `User does not exist with id = ${req.params.id} .`
-            });
-        }
-        next();
+        userService.checkID(req.params.id)
+            .then((result) => {
+                if(!result) {
+                    return res.status(404).json({
+                                "status": "failed",
+                                "message": `User does not exist with id = ${req.params.id} .`
+                            });
+                }
+                next();
+            })
     } 
 
-    getAllUser = (req,res) => {
-        return res.status(200).json(this.users);
+    getAllUser = async (req,res) => {
+        res.status(200).json(
+            await userService.getAllUser()
+        );
     }
 
-    getUserById = (req,res) => {
-        const user = this.users.find((x) => x.id == req.params.id);
-        return res.status(200).json(user);
+    getUserById = async (req,res) => {
+        res.status(200).json(
+            await userService.getUserByID(req.params.id)
+        );
     }
 
     createNewUser = (req,res) => {
-        const NewUser = {
-            "id" : this.users.length + 1,
+        const user = {
             "fullname" : req.body.fullname,
             "gender" : req.body.gender,
-            "age" : req.body.age 
-        };
-        this.users.push(NewUser);
-        res.status(201).json(NewUser);
+            "age" : req.body.age
+        }
+        userService.createNewUser(user)
+            .then((check) => {
+                if(check) {
+                    res.status(201).json(user);
+                }else {
+                    res.status(500).json({
+                        "message" : "Error while creating user ."
+                    });
+                }
+            });
+        
     }
 
     updateUser = (req,res) => {
-        const user = this.users.find((user) => user.id == req.params.id);
-        user.fullname = req.body.fullname;
-        user.gender = req.body.gender;
-        user.age = req.body.age;
-
-        return res.status(204).json();
+        const user = {
+            "fullname" : req.body.fullname,
+            "gender" : req.body.gender,
+            "age" : req.body.age
+        }
+        userService.updateUser(req.params.id,user)
+            .then((check) => {
+                if(check) {
+                    res.status(204).json();
+                }else {
+                    res.status(500).json({
+                        "message" : "Error while updating user ."
+                    });
+                }
+            })
     }
 
     deleteUser = (req,res) => {
-        const index = this.users.map(x=>x.id).indexOf(Number(req.params.id));
-        this.users.splice(index, 1);
-
-        return res.status(204).json();
+        userService.deleteUser(req.params.id)
+            .then((check) => {
+                if(check) {
+                    res.status(204).json();
+                }else {
+                    res.status(500).json({
+                        "message" : "Error while deleting user ."
+                    });
+                }
+            })
     }
 }
 
