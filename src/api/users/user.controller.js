@@ -1,79 +1,105 @@
 import userService from "./user.service.js";
 class UserController {
 
-    checkID = (req,res,next) => {
-        userService.checkID(req.params.id)
-            .then((result) => {
-                if(!result) {
-                    return res.status(404).json({
-                                "status": "failed",
-                                "message": `User does not exist with id = ${req.params.id} .`
-                            });
-                }
-                next();
-            })
+    checkID = async (req,res,next) => {
+        try {
+            const data = await userService.getUserByID(req.params.id);
+            if(data.length == 0) {
+                return res.status(404).json({
+                    "status": "failed",
+                    "message": `User does not exist with id = ${req.params.id} .`
+                });
+            }
+            next(); 
+        }catch(err) {
+            next(err);
+        }
     } 
 
     getAllUser = async (req,res) => {
-        res.status(200).json(
-            await userService.getAllUser()
-        );
+        try {
+            return res.status(200).json(
+                await userService.getAllUser()
+            );
+        }catch(err) {
+            next(err);
+        }
     }
 
     getUserById = async (req,res) => {
-        res.status(200).json(
-            await userService.getUserByID(req.params.id)
-        );
+        try{
+            return res.status(200).json(
+                await userService.getUserByID(req.params.id)
+            );
+        }catch(err){
+            next(err);
+        }
     }
 
-    createNewUser = (req,res) => {
+    isUserExisted = async(req,res,next) => {
+        try {
+            const user = await userService.getByUserName(req.body.username);
+            if(user.length != 0) {
+                return res.status(409).json({
+                    "message" : `User already exists with ${req.body.username}`
+                });
+            }
+            next();
+        }catch(err) {
+            next(err);
+        }
+    }
+
+    createNewUser = async (req,res,next) => {
         const user = {
             "fullname" : req.body.fullname,
             "gender" : req.body.gender,
-            "age" : req.body.age
+            "age" : req.body.age,
+            "username" : req.body.username,
+            "password" : req.body.password,
+            "confirmPassword" : req.body.confirmPassword,
+            "email" : req.body.email
         }
-        userService.createNewUser(user)
-            .then((check) => {
-                if(check) {
-                    res.status(201).json(user);
-                }else {
-                    res.status(500).json({
-                        "message" : "Error while creating user ."
-                    });
-                }
+        try {
+            await userService.createNewUser(user);
+            return res.status(201).json({
+                "message" : "User created successfully",
+                "user" : user
             });
-        
+        }catch(err) {
+            next(err);
+        }
     }
 
-    updateUser = (req,res) => {
+    updateUser = async (req,res) => {
         const user = {
             "fullname" : req.body.fullname,
             "gender" : req.body.gender,
             "age" : req.body.age
         }
-        userService.updateUser(req.params.id,user)
-            .then((check) => {
-                if(check) {
-                    res.status(204).json();
-                }else {
-                    res.status(500).json({
-                        "message" : "Error while updating user ."
-                    });
-                }
-            })
+        await userService.updateUser(req.params.id,user);
+        return res.status(204).json({});
     }
 
-    deleteUser = (req,res) => {
-        userService.deleteUser(req.params.id)
-            .then((check) => {
-                if(check) {
-                    res.status(204).json();
-                }else {
-                    res.status(500).json({
-                        "message" : "Error while deleting user ."
-                    });
-                }
+    deleteUser = async(req,res) => {
+        await userService.deleteUser(req.params.id);
+        return res.status(204).json({});
+    }
+
+    getCredential = async (req,res) => {
+        const {username,password} = req.body;
+        const token = await userService.getCredential(username,password);
+        if(token) {
+            return res.status(200).json({
+                "message" : "Valid credentials",
+                "JWT" : token
             })
+        }else {
+            return res.status(400).json({
+                "status" : "failed",
+                "message" : "Invalid credentials",
+            });
+        }
     }
 }
 

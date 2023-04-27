@@ -1,6 +1,6 @@
 import express from "express";
 import userController from "./user.controller.js";
-import {ValidateUser} from '../../middlewares/index.js'
+import {ValidateUser,validAuthorization,ValidateUserUpdate} from '../../middlewares/index.js'
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ router
     .get('/',userController.getAllUser)
     .get('/:id',userController.getUserById)
     .post('/',ValidateUser,userController.createNewUser)
-    .put('/:id',ValidateUser,userController.updateUser)
+    .put('/:id',ValidateUserUpdate,validAuthorization,userController.updateUser)
     .delete('/:id',userController.deleteUser);
 
 export default router;
