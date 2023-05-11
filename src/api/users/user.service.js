@@ -37,8 +37,6 @@ class UserService {
 
     getCredential = async(username,password) => {
         const user = await query("Select * from user where username = ?", [username]);
-        // console.log(user[0].password,user[0].salt,password);
-        // console.log(crypto.pbkdf2Sync(password, user[0].salt, 1000, 64, 'sha512').toString('hex'));
         if(user[0]) {
             if(comparePassword(user[0].password,user[0].salt,password)) {
                 return jwt.sign({
