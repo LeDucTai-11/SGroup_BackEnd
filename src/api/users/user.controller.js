@@ -72,18 +72,26 @@ class UserController {
     }
 
     updateUser = async (req,res) => {
-        const user = {
-            "fullname" : req.body.fullname,
-            "gender" : req.body.gender,
-            "age" : req.body.age
+        try {
+            const user = {
+                "fullname" : req.body.fullname,
+                "gender" : req.body.gender,
+                "age" : req.body.age
+            }
+            await userService.updateUser(req.params.id,user);
+            return res.status(204).json({});
+        }catch(err) {
+            next(err);
         }
-        await userService.updateUser(req.params.id,user);
-        return res.status(204).json({});
     }
 
     deleteUser = async(req,res) => {
-        await userService.deleteUser(req.params.id);
-        return res.status(204).json({});
+        try {
+            await userService.deleteUser(req.params.id);
+            return res.status(204).json({});
+        }catch(err) {
+            next(err);
+        }
     }
 
     getCredential = async (req,res) => {
