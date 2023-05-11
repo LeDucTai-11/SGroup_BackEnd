@@ -1,13 +1,18 @@
-
+import dotenv from 'dotenv'
 import express from 'express';
-import UserRoute from './api/index.js';
+import routers from './api/index.js';
+import { exceptionHandler } from './middlewares/index.js';
 
 const app = express();
-const port = 3000;
+
+dotenv.config();
+const port = process.env.PORT
+
 
 app.use(express.json());
 
-app.use('/',UserRoute);
+app.use('/',routers);
+app.use(exceptionHandler);
 app.listen(port,() => {
     
     console.log("Listening on port " + port);
