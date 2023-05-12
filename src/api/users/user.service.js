@@ -1,10 +1,7 @@
 import query from "../../database/query.js";
-import HttpException from "../../shared/http-exception.js";
 import {hashPassword,comparePassword} from "../../helpers/hash.js";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv'
-import crypto from 'crypto';
-import { log } from "console";
 
 dotenv.config();
 class UserService {

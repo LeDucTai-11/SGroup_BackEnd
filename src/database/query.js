@@ -13,7 +13,7 @@ export default (sql, values) => {
                     connection.release();
                     if (err) {
                         // console.error('Error while excuting query: ', err);
-                        reject(new HttpException(500,"Internal Server Error",err));
+                        reject(new HttpException(500,err));
                     } else {
                         resolve(results);
                     }

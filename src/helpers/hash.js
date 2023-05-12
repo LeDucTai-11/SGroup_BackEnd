@@ -16,4 +16,8 @@ const comparePassword = (hashedPassword,salt,rawPassword) => {
     return hashedPassword == hashedRawPassword;
 }
 
-export {hashPassword,comparePassword};
+const generateRandomToken = () => {
+    return crypto.randomBytes(16).toString('hex');
+}
+
+export {hashPassword,comparePassword,generateRandomToken};

@@ -41,7 +41,7 @@ class UserController {
             const user = await userService.getByUserName(req.body.username);
             if(user.length != 0) {
                 return res.status(409).json({
-                    "message" : `User already exists with ${req.body.username}`
+                    "message" : `User already exists with USERNAME : ${req.body.username}`
                 });
             }
             next();
