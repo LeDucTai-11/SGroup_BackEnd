@@ -3,6 +3,7 @@ import express from 'express';
 import routers from './api/index.js';
 import { exceptionHandler } from './middlewares/index.js';
 
+
 const app = express();
 
 dotenv.config();

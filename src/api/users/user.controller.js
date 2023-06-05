@@ -17,9 +17,10 @@ class UserController {
     } 
 
     getAllUser = async (req,res) => {
+        const {page,size} = req.query;
         try {
             return res.status(200).json(
-                await userService.getAllUser()
+                await userService.getAllUser(page,size)
             );
         }catch(err) {
             next(err);
@@ -33,6 +34,22 @@ class UserController {
             );
         }catch(err){
             next(err);
+        }
+    }
+
+    getCredential = async (req,res) => {
+        const {username,password} = req.body;
+        const token = await userService.getCredential(username,password);
+        if(token) {
+            return res.status(200).json({
+                "message" : "Valid credentials",
+                "JWT" : token
+            })
+        }else {
+            return res.status(400).json({
+                "status" : "failed",
+                "message" : "Invalid credentials",
+            });
         }
     }
 
@@ -57,11 +74,12 @@ class UserController {
             "age" : req.body.age,
             "username" : req.body.username,
             "password" : req.body.password,
-            "confirmPassword" : req.body.confirmPassword,
             "email" : req.body.email
         }
+        const authorizationHeader = req.headers.authorization;
+        const userToken = authorizationHeader.substring(7);
         try {
-            await userService.createNewUser(user);
+            await userService.createNewUser(user,userToken);
             return res.status(201).json({
                 "message" : "User created successfully",
                 "user" : user
@@ -91,22 +109,6 @@ class UserController {
             return res.status(204).json({});
         }catch(err) {
             next(err);
-        }
-    }
-
-    getCredential = async (req,res) => {
-        const {username,password} = req.body;
-        const token = await userService.getCredential(username,password);
-        if(token) {
-            return res.status(200).json({
-                "message" : "Valid credentials",
-                "JWT" : token
-            })
-        }else {
-            return res.status(400).json({
-                "status" : "failed",
-                "message" : "Invalid credentials",
-            });
         }
     }
 }

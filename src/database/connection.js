@@ -1,7 +1,4 @@
 import mysql from 'mysql2'
-import dotenv from 'dotenv'
-import { query } from 'express';
-dotenv.config()
 
 const connection = mysql.createPool({
     host: process.env.DB_HOST,

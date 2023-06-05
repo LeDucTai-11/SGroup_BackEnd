@@ -10,7 +10,7 @@ router
     .get('/',userController.getAllUser)
     .get('/:id',userController.getUserById)
     .post('/',ValidateUser,userController.createNewUser)
-    .put('/:id',ValidateUserUpdate,validAuthorization,userController.updateUser)
+    .put('/:id',ValidateUserUpdate,userController.updateUser)
     .delete('/:id',userController.deleteUser);
 
 export default router;

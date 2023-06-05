@@ -1,5 +1,5 @@
 export default(req, res, next) =>{
-    const { fullname, username, password,confirrmPassword, email, age,gender } = req.body;
+    const { fullname, username, password, email, age,gender } = req.body;
     
     if (fullname.length < 2) {
       return res.status(400).json({ message: "Full name is not valid" });
@@ -15,10 +15,6 @@ export default(req, res, next) =>{
 
     if (password.length < 3) {
       return res.status(400).json({ message: "Password is not valid" });
-    }
-
-    if(confirrmPassword != password) {
-      return res.status(400).json({ message: "ConfirmPassword is not valid" });
     }
   
     const emailRegex = /\S+@\S+\.\S+/;

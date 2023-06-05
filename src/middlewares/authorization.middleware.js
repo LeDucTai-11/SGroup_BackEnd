@@ -4,7 +4,6 @@ import {HttpException} from '../shared/index.js';
 
 dotenv.config();
 
-
 const validAuthorization = (req,res,next) => {
     const username = req.query.username;
     const authorizationHeader = req.headers.authorization;
@@ -20,7 +19,7 @@ const validAuthorization = (req,res,next) => {
         }
         next();
     }catch(err) {
-        next(new HttpException(401,"Invalid credentials",err));
+        next(new HttpException(401,err.message));
     }
 }
 
